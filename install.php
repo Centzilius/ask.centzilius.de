@@ -4,14 +4,12 @@
  * © 2013 nilsding
  * License: AGPLv3, read the LICENSE file for the license text.
  */
+include('fixDir.php');
 session_start();
 if (isset($_GET['p'])) {
   $page = $_GET['p'];
 } else {
   $page = "start";
-}
-if (file_exists('config.php')) {
-  $page = 'config_already_exists';
 }
 ?>
 <!DOCTYPE html>
@@ -123,7 +121,7 @@ if (!isset($_GET['jak_entriesperpage'])) {
 <td><input type="text" name="mysql_pass" value="password"></td>
 </tr>
 <tr>
-<td><label for="mysql_database">Server:</label></td>
+<td><label for="mysql_database">Database name:</label></td>
 <td><input type="text" name="mysql_database" value="database"></td>
 </tr>
 <tr>
@@ -221,13 +219,16 @@ case "finish_2": ?>
     echo "<p>Please check your MySQL user/pass/server/whatever.</p>";
     echo "<p>Oh and please ignore the following errors, if any. Thanks! :3</p>";
   }
-  
-  $JUSTASK_CONFIG_VERSION = 5;
+
+  //TODO: change this ALWAYS to the latest version. and don't forget to change the other code.
+  $JUSTASK_CONFIG_VERSION = 8;
   
   /* default twitter consumer keys */
+
+
   $JUSTASK_TWITTER_CK = "ABr5S6jAB4RQYFYWm5Sq";
   $JUSTASK_TWITTER_CS = "ICM7eKAlu6PSPysQr7Sim0uFT4HoqK7d5asEpW1Qd6";
-  $JUSTASK_TWITTER_CALLBACK = "http://" . $_SERVER['HTTP_HOST'] . "/callback.php";
+  $JUSTASK_TWITTER_CALLBACK = "http://" . $_SERVER['HTTP_HOST'] . fixDir() . "/callback.php";
   
   echo "<p>Creating config table...</p>";
   
