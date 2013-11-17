@@ -1,0 +1,26 @@
+{include="header"}
+{if="!$logged_in"}
+{include="ucp-login"}
+{else}
+  
+  {if="$shouldchangepassanduser"}
+    <div data-alert class="alert-box alert">
+      For security reasons, you should change your password and your user name immediately to something else.
+      <a href="#" class="close">&times;</a>
+    </div>
+  {/if}
+
+  {if="$current_page === 'front'"}
+    {include="ucp-front"}
+  {elseif="$current_page === 'inbox'"}
+    {include="ucp-inbox"}
+  {elseif="$current_page === 'answers'"}
+    {include="ucp-answers"}
+  {elseif="$current_page === 'settings'"}
+    {include="ucp-settings"}
+  {/if}
+
+{/if}
+  </div>
+</div>
+{include="footer"}

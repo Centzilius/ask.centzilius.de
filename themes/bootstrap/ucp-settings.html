@@ -1,0 +1,269 @@
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.php">{$site_name}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav">
+            </ul>
+            {if="!$logged_in"}
+            <li><a href="ucp.php">Log in</a></li>
+            {else}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$user_name} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="ucp.php?p=front">Dashboard</a></li>
+                <li><a href="ucp.php?p=inbox">{if="$question_count > 0"}<span class="badge pull-right">{$question_count}</span>{/if}Inbox</a></li>
+                <li><a href="ucp.php?p=answers">Antworten</a></li>
+                <li class="active"><a href="ucp.php?p=settings">Einstellungen</a></li>
+                <li class="divider"></li>
+                <li><a href="ucp.php?p=logout">Logout</a></li>
+              </ul>
+            </li>
+            {/if}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <!-- End Fixed navbar -->
+<div class="container">
+{if="$is_message"}
+<div class="alert alert-warning alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  {$message}
+</div>
+{/if}
+<h3>Benutzerinformationen</h3>
+<form class="form-horizontal" method="POST" action="ucp.php?change=userdetails">
+<div class="form-group">
+<label class="col-sm-3 control-label" for="gravatar_email">Gravatar E-Mail Adresse</label>
+<div class="col-sm-3">
+<input class="form-control" type="email" id="gravatar_email" name="gravatar_email" value="{$user_gravatar_emailaddr}">
+<button class="btn btn-primary">Speichern</button>
+</div>
+</div>
+</form>
+
+<h3>API</h3>
+<form class="form-horizontal" method="POST" action="ucp.php?change=generate_api_key">
+<div class="form-group">
+<label class="col-sm-2 control-label" for="api_key">API Key</label>
+<div class="row">
+  <div class="col-lg-3">
+    <div class="input-group">
+      <input type="text" id="api_key" readonly="readonly" name="api_key" value="{$api_key}" class="form-control">
+      <span class="input-group-btn">
+        <button class="btn btn-default">Generieren</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div>
+</div><!-- /.row -->
+<span class="help-block">Entwickler m&ouml;chten vielleicht die <a href="https://github.com/nilsding/justask/wiki/API-documentation">API Dokumentationen</a> lesen (in bearbeitung).
+</span>
+</form>
+
+<h3>JustAsk Einstellungen</h3>
+<form class="form-horizontal" method="POST" action="ucp.php?change=justask">
+<div class="form-group">
+<label class="col-sm-2 control-label" for="jak_name">Name</label>
+<div class="col-sm-2">
+<input class="form-control" type="text" id="jak_name" name="jak_name" value="{$site_name}">
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2 control-label" for="jak_entriesperpage">Eintr&auml;ge pro Seite</label>
+<div class="col-sm-2">
+<input class="form-control" type="number" id="jak_entriesperpage" name="jak_entriesperpage" value="{$max_entries_per_page}">
+</div>
+</div>
+<div class="checkbox">
+  <label class="" for="jak_gravatar">
+<input type="checkbox" id="jak_gravatar" name="jak_gravatar" class="" {$gravatar ? ' checked' : ''}>
+    Gravatar
+  </label>
+</div>
+<div class="checkbox">
+  <label for="jak_twitter_on">
+    <input type="checkbox" id="jak_twitter_on" name="jak_twitter_on" {$twitter_on ? ' checked' : ''}>
+    Twitter
+  </label>
+</div>
+<div class="checkbox">
+  <label for="jak_anonymous_questions">
+    <input type="checkbox" id="jak_anonymous_questions" name="jak_anonymous_questions" {$anon_questions ? ' checked' : ''}>
+    Anonyme fragen
+  </label>
+</div>
+<div class="checkbox">
+  <label for="jak_show_id">
+    <input type="checkbox" id="jak_show_id" name="jak_show_id" {$show_id ? ' checked' : ''}>
+    Zeige User ID
+  </label>
+</div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="jak_name" class="right inline">
+            <span data-tooltip class="has-tip" title="The current theme.">Theme</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <select name="jak_theme" id="jak_theme">
+{loop="themes"}<option{if="$value == $current_theme"} selected{/if}>{$value}</option>{/loop}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+      <button class="small secondary button">Save</button>
+    </div>
+  </div>
+</form>
+
+{if="$twitter_on"}
+<h3>Posting to Twitter</h3>
+<form class="custom" method="POST" action="ucp.php?change=twitter_signin">
+<button class="small button">Sign in with Twitter</button>
+</form>
+
+<form class="custom" method="POST" action="ucp.php?change=twitter_tokens">
+  <p>You may define your own access tokens here for promotional uses.</p>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="ck" class="right inline">
+            <span data-tooltip class="has-tip" title="The OAuth consumer key.">Consumer Key</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="text" id="ck" name="ck" value="{$twitter_ck}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="cs" class="right inline">
+            <span data-tooltip class="has-tip" title="The OAuth consumer secret.">Consumer Secret</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="text" id="cs" name="cs" value="{$twitter_cs}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="at" class="right inline">
+            <span data-tooltip class="has-tip" title="Your OAuth access token.">Access Token</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="text" id="at" name="at" value="{$twitter_at}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="ats" class="right inline">
+            <span data-tooltip class="has-tip" title="Your OAuth access token secret.">Access Token Secret</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="text" id="ats" name="ats" value="{$twitter_ats}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="callback" class="right inline">
+            <span data-tooltip class="has-tip" title="The full URL to your callback.php.">Callback</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="text" id="callback" name="callback" value="{$twitter_callback}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-4 columns">
+          <label for="default_check" class="right inline">
+            <span data-tooltip class="has-tip" title="Is the &quot;Post to Twitter&quot; checkbox always checked?">Checkbox</span>
+          </label>
+        </div>
+        <div class="small-8 columns">
+          <input type="checkbox" id="default_check" name="default_check" style="display: none;"{$twitter_check ? ' checked' : ''}>
+          <span class="custom checkbox"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+      <button class="small secondary button">Save</button>
+    </div>
+  </div>
+</form>
+{/if}
+
+<h3>Login details</h3>
+<p>Change your username and password here.</p>
+<form class="custom" method="POST" action="ucp.php?change=logindata">
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-3 columns">
+          <label for="username" class="right inline">User name</label>
+        </div>
+        <div class="small-9 columns">
+          <input type="text" id="username" name="username" value="{$user_name}">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-3 columns">
+          <label for="passwd" class="right inline">Password</label>
+        </div>
+        <div class="small-9 columns">
+          <input type="password" name="passwd" id="passwd">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-8">
+      <button class="small secondary button">Log in</button>
+    </div>
+  </div>
+</form>
+</div>

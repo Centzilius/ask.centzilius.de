@@ -1,0 +1,100 @@
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.php">{$site_name}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav">
+            </ul>
+            {if="!$logged_in"}
+            <li><a href="ucp.php">Log in</a></li>
+            {else}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$user_name} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="ucp.php?p=front">Dashboard</a></li>
+                <li class="active"><a href="ucp.php?p=inbox">{if="$question_count > 0"}<span class="badge pull-right">{$question_count}</span>{/if}Inbox</a></li>
+                <li><a href="ucp.php?p=answers">Antworten</a></li>
+                <li><a href="ucp.php?p=settings">Einstellungen</a></li>
+                <li class="divider"></li>
+                <li><a href="ucp.php?p=logout">Logout</a></li>
+              </ul>
+            </li>
+            {/if}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <!-- End Fixed navbar -->
+{if="$question_count == 0"}
+<div class="container">
+<div class="alert alert-warning alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  Du hast keine neuen Fragen.
+</div>
+</div>
+{else}
+<div class="container">
+{if="$is_message"}
+<div class="alert alert-warning alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  {$message}
+</div>
+{/if}
+<!-- Begin questions -->
+
+{loop="answers"}
+<hr />
+<form class="custom" action="answer.php" method="POST">
+  <input type="hidden" name="question_id" value="{$value.answer_id}">
+    <div class="media">
+      <a class="pull-left" href="#">
+        <img class="media-object max-48px" src="{$value.asker_gravatar}" alt="Gravatar">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading">{$value.question_content} <small>gefragt von {$value.question_asked_by}</small></h4>
+        {$value.answer_text}
+        </div>
+      </div>
+      <p><small>{$value.question_time_answered}</small></p>
+  <p>
+    <button name="action" value="delete_answer" type="button" class="btn btn-danger">Antwort l&ouml;schen</button>
+    <a href="view_answer.php?id={$value.answer_id}" class="btn btn-primary" role="button">Einzelne Antwort ansehen</a>
+</form>
+{/loop}
+
+{loop="questions"}
+<hr />
+<form class="custom" action="answer.php" method="POST">
+  <input type="hidden" name="question_id" value="{$value.question_id}">
+    <div class="media">
+      <a class="pull-left" href="#">
+        <img class="media-object max-48px" src="{$value.asker_gravatar}" alt="Gravatar">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading">{$value.question_content} <small>gefragt von {$value.question_asked_by}{if="$show_id"} (ID: {$value.asker_id}){/if}</small></h4>
+        Gefragt am {$value.question_time_asked}</div>
+      </div>
+<textarea id="answer" name="answer" class="form-control" rows="3"></textarea>
+<button name="action" value="answer" class="btn btn-success">Antworte</button>
+<button name="action" value="delete" class="btn btn-danger">L&ouml;schen</button>
+{if="$twitter_on"}
+  <div class="checkbox">
+    <label for="post_to_twitter">
+      <input type="checkbox" id="post_to_twitter" name="post_to_twitter" {$twitter_check ? ' checked' : ''}> Auf Twitter posten
+    </label>
+  </div>
+{/if}
+</form>
+{/loop}
+<!-- End questions -->
+{include="pagination"}
+{/if}

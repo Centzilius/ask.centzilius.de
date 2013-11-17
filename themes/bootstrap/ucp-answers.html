@@ -1,0 +1,76 @@
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button  class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.php">{$site_name}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav">
+            </ul>
+            {if="!$logged_in"}
+            <li><a href="ucp.php">Log in</a></li>
+            {else}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$user_name} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="ucp.php?p=front">Dashboard</a></li>
+                <li><a href="ucp.php?p=inbox">{if="$question_count > 0"}<span class="badge pull-right">{$question_count}</span>{/if}Inbox</a></li>
+                <li class="active"><a href="ucp.php?p=answers">Antworten</a></li>
+                <li><a href="ucp.php?p=settings">Einstellungen</a></li>
+                <li class="divider"></li>
+                <li><a href="ucp.php?p=logout">Logout</a></li>
+              </ul>
+            </li>
+            {/if}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <!-- End Fixed navbar -->
+{if="$answer_count == 0"}
+<div class="container">
+<div class="alert alert-warning alert-dismissable">
+  <button  class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  Du hast noch keine Fragen beantwortet.
+</div>
+</div>
+{else}
+<div class="container">
+{if="$is_message"}
+<div class="alert alert-warning alert-dismissable">
+  <button  class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  {$message}
+</div>
+{/if}
+
+<!-- Begin answers -->
+{loop="answers"}
+<hr />
+<form class="custom" action="answer.php" method="POST">
+  <input type="hidden" name="question_id" value="{$value.answer_id}">
+    <div class="media">
+      <a class="pull-left" href="#">
+        <img class="media-object max-48px" src="{$value.asker_gravatar}" alt="Gravatar">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading">{$value.question_content} <small>gefragt von {$value.question_asked_by}</small></h4>
+        {$value.answer_text}
+        </div>
+      </div>
+      <p><small>{$value.question_time_answered}</small></p>
+  <p>
+    <button name="action" value="delete_answer"  class="btn btn-danger">Antwort l&ouml;schen</button>
+    <a href="view_answer.php?id={$value.answer_id}" class="btn btn-primary" role="button">Einzelne Antwort ansehen</a>
+</form>
+{/loop}
+<!-- End answers -->
+{include="pagination"}
+{/if}
+</div>
